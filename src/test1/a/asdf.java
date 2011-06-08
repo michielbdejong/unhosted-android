@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import android.app.Activity;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.InputSource;
 
@@ -43,9 +46,17 @@ public class asdf extends Activity {
 			xr.parse(new InputSource(lrdd.openStream()));
 			String davUrl = myLrddParser.getDavUrl();
 			return davUrl;
-		} catch (Exception e) {
-			return "Error!";
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return "Error!";
 	}
 	
 	//isn't there a cleaner way of doing this?
@@ -81,8 +92,8 @@ public class asdf extends Activity {
 					+ userAddressParts[1] 
 					+ "/" + userAddressParts[0] 
 					+ "/myfavouritesandwich.org/favSandwich");
-			Sandwich sandwich = (Sandwich) new Gson().fromJson(
-						convertStreamToString(favSandwich.openStream()),Object.class);
+			Sandwich sandwich = new Gson().fromJson(
+						convertStreamToString(favSandwich.openStream()), Sandwich.class);
 			return sandwich.ingredients;
 		} catch(MalformedURLException e) {
 		} catch(IOException e) {
