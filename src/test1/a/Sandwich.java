@@ -5,8 +5,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Sandwich {
-	public String[] ingredients = {"", ""};
+	public String[] ingredients;
 
+	public Sandwich(String[] ingredients) {
+		this.ingredients = ingredients;
+	}
+	public Sandwich() {
+		String[] emptyIngredients ={"",""};
+		this.ingredients = emptyIngredients;
+	}
 	public void fromJson(String json) {
 		JSONObject sandwichObj;
 		try {
@@ -18,5 +25,8 @@ public class Sandwich {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
+	}
+	public String toJson() {
+		return "{ingredients:[\""+this.ingredients[0]+"\", \""+this.ingredients[1]+"\"]}";
 	}
 }

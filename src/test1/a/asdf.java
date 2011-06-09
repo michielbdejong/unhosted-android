@@ -1,34 +1,23 @@
 package test1.a;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.InputSource;
-
-import com.google.gson.Gson;
 
 public class asdf extends Activity {
 	private Unhosted unhosted;
+	private String userAddress;
 	private String[] getSandwichIngredients(String userAddress) {
 		Sandwich sandwich = new Sandwich();
 		sandwich.fromJson(this.unhosted.get(userAddress, "myfavouritesandwich.org", "favSandwich"));
 		return sandwich.ingredients;
+	}
+
+	private void setSandwichIngredients(String[] ingredients) {
+		String json = new Sandwich(ingredients).toJson();
+		this.unhosted.set(this.userAddress, "myfavouritesandwich.org", "favSandwich", json);
+		String[] check = this.getSandwichIngredients(this.userAddress);
 	}
 
 	/** Called when the activity is first created. */
