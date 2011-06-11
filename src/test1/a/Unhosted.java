@@ -6,25 +6,32 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 public class Unhosted {
 	private String userAddress, userName, userDomain, userPassword, davUrl;
-	private Map davTokens;
+	//private Map<String, String> davTokens;
 	public Unhosted(String userAddress, String userPassword) {
 		this.userAddress = userAddress;
 		this.userPassword = userPassword;
@@ -113,29 +120,38 @@ public class Unhosted {
 	}
 	private String getDavToken(String dataScope) {
 		try {
-		    // Create a new HttpClient and Post Header
-		    HttpClient httpclient = new DefaultHttpClient();
-		    HttpPost httppost = new HttpPost(this.davUrl + "/oauth2/auth/");
-			
-		    //TODO: add parameters and debug everything
-		    
-		    try {
-		        HttpResponse response = httpclient.execute(httppost);
-		    } catch (ClientProtocolException e) {
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpPost httppost = new HttpPost(this.davUrl + "oauth2/auth/");//this should be without the trailing slash, but HttpPost reverts 301's to GETs, so quick hack...
+		    List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(4);
+	        nameValuePairs.add(new BasicNameValuePair("user_address", this.userAddress));
+	        nameValuePairs.add(new BasicNameValuePair("pwd", this.userPassword));
+	        nameValuePairs.add(new BasicNameValuePair("scope", dataScope));
+	        nameValuePairs.add(new BasicNameValuePair("redirect_uri", "ho://me"));
+	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+	        HttpResponse response = httpclient.execute(httppost);
+	        Header[] a = response.getAllHeaders();
+	        for(int i = 0; i < a.length; i++) {
+	        	String b = a[i].getValue();
+	        	b = b;
+	        }
+	        Header[] redirectLocations = response.getHeaders("Location");
+	        String davToken = redirectLocations[0].getValue();
+	        davToken = davToken.substring(14, 0);//length of "ho://me?token=" is 14
+		    return davToken;
+		} catch (ClientProtocolException e) {
 		        // TODO Auto-generated catch block
-		    } catch (IOException e) {
+		} catch (IOException e) {
 		        // TODO Auto-generated catch block
-		    }
-		} catch(IOException e) {
 		}
 		//TODO post to oauth for this datascope, get the token from the redirect url
 		return "deadbeef";
 	}
 	private String getBasicAuth(String dataScope) {
-		if (!davTokens.containsKey(dataScope)) {
-			davTokens.put(dataScope, this.getDavToken(dataScope));
-		}
-		return (String) davTokens.get(dataScope);
+		return this.getDavToken(dataScope);
+		//if (!this.davTokens.containsKey(dataScope)) {
+		//	this.davTokens.put(dataScope, this.getDavToken(dataScope));
+		//}
+		//return (String) this.davTokens.get(dataScope);
 	}
 	public void set(String dataScope, String blobKey, String blob) {
 		try {

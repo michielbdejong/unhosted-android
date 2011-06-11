@@ -16,8 +16,7 @@ public class asdf extends Activity {
 
 	private void setSandwichIngredients(String[] ingredients) {
 		String json = new Sandwich(ingredients).toJson();
-		this.unhosted.set(this.userAddress, "myfavouritesandwich.org", "favSandwich", json);
-		String[] check = this.getSandwichIngredients(this.userAddress);
+		this.unhosted.set("myfavouritesandwich.org", "favSandwich", json);
 	}
 
 	/** Called when the activity is first created. */
@@ -28,6 +27,8 @@ public class asdf extends Activity {
 		String userAddress = "mich@myfavouritesandwich.org";
 		String userPass = "asdf";
 		this.unhosted = new Unhosted(userAddress, userPass);
+		String[] ingr = {"an", "droid"};
+		this.setSandwichIngredients(ingr);
 		String[] ingredients = this.getSandwichIngredients(userAddress);
 		tv.setText("Logged in as "+userAddress+" - your sandwich has "+ingredients[0]+" and "+ingredients[1]+" on it");
 		setContentView(tv);
