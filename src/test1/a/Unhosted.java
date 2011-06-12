@@ -126,25 +126,27 @@ public class Unhosted {
 	        nameValuePairs.add(new BasicNameValuePair("user_address", this.userAddress));
 	        nameValuePairs.add(new BasicNameValuePair("pwd", this.userPassword));
 	        nameValuePairs.add(new BasicNameValuePair("scope", dataScope));
-	        nameValuePairs.add(new BasicNameValuePair("redirect_uri", "ho://me"));
+	        //nameValuePairs.add(new BasicNameValuePair("redirect_uri", "ho://me"));
 	        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 	        HttpResponse response = httpclient.execute(httppost);
 	        Header[] a = response.getAllHeaders();
 	        for(int i = 0; i < a.length; i++) {
-	        	String b = a[i].getValue();
-	        	b = b;
+	        	if(a[i].getName().equals("Token")) {
+	        			return a[i].getValue();
+	        	}	
 	        }
-	        Header[] redirectLocations = response.getHeaders("Location");
-	        String davToken = redirectLocations[0].getValue();
-	        davToken = davToken.substring(14, 0);//length of "ho://me?token=" is 14
+	        Header[] tokenHeaders = response.getHeaders("Token");
+	        String davToken = tokenHeaders[0].getName();
+	        davToken = tokenHeaders[0].getValue();
+	        //davToken = davToken.substring(14, 0);//length of "ho://me?token=" is 14
 		    return davToken;
 		} catch (ClientProtocolException e) {
 		        // TODO Auto-generated catch block
+			return "deadbeef";	
 		} catch (IOException e) {
 		        // TODO Auto-generated catch block
+			return "deadbeef";			
 		}
-		//TODO post to oauth for this datascope, get the token from the redirect url
-		return "deadbeef";
 	}
 	private String getBasicAuth(String dataScope) {
 		return this.getDavToken(dataScope);
