@@ -29,6 +29,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+
 public class Unhosted {
 	private String userAddress, userName, userDomain, userPassword, davUrl;
 	//private Map<String, String> davTokens;
@@ -149,7 +150,11 @@ public class Unhosted {
 		}
 	}
 	private String getBasicAuth(String dataScope) {
-		return this.getDavToken(dataScope);
+		String auth = this.userAddress + ":" + this.getDavToken(dataScope) + "\0";
+		byte[] authBytes = auth.getBytes();
+		String ret = "Basic " + Base64.encodeBytes(
+					authBytes);
+		return ret;
 		//if (!this.davTokens.containsKey(dataScope)) {
 		//	this.davTokens.put(dataScope, this.getDavToken(dataScope));
 		//}
@@ -159,7 +164,7 @@ public class Unhosted {
 		try {
 		    // Create a new HttpClient and Post Header
 		    HttpClient httpclient = new DefaultHttpClient();
-		    HttpPut httpput = new HttpPut(this.davUrl + "/webdav/" 
+		    HttpPut httpput = new HttpPut(this.davUrl + "webdav/" 
 					+ this.userDomain 
 					+ "/" + this.userName 
 					+ "/myfavouritesandwich.org/favSandwich");
