@@ -7,7 +7,6 @@ import android.widget.TextView;
 
 public class asdf extends Activity {
 	private Unhosted unhosted;
-	private String userAddress;
 	private String[] getSandwichIngredients(String userAddress) {
 		Sandwich sandwich = new Sandwich();
 		sandwich.fromJson(this.unhosted.get(userAddress, "myfavouritesandwich.org", "favSandwich"));
@@ -27,7 +26,7 @@ public class asdf extends Activity {
 		String userAddress = "mich@myfavouritesandwich.org";
 		String userPass = "asdf";
 		this.unhosted = new Unhosted(userAddress, userPass);
-		String[] ingr = {"an", "droid"};
+		String[] ingr = {"and", "roid"};
 		this.setSandwichIngredients(ingr);
 		String[] ingredients = this.getSandwichIngredients(userAddress);
 		tv.setText("Logged in as "+userAddress+" - your sandwich has "+ingredients[0]+" and "+ingredients[1]+" on it");
