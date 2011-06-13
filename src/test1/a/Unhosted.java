@@ -108,7 +108,7 @@ public class Unhosted {
 		}
 		String davUrl = this.userAddressToDavUrl(userAddress, userAddressParts[1]);
 		try {
-			URL blob = new URL(davUrl + "/webdav/" 
+			URL blob = new URL(davUrl + "webdav/" 
 					+ userAddressParts[1] 
 					+ "/" + userAddressParts[0] 
 					+ "/myfavouritesandwich.org/favSandwich");
