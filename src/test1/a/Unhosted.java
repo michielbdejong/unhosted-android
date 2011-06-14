@@ -29,6 +29,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
+import android.text.TextUtils;
+
 
 public class Unhosted {
 	private String userAddress, userName, userDomain, userPassword, davUrl;
@@ -42,10 +44,17 @@ public class Unhosted {
 		}
 		this.userName = userAddressParts[0];
 		this.userDomain = userAddressParts[1];
-		this.davUrl = this.userAddressToDavUrl(this.userAddress, this.userDomain);
 	}
 	
-	private String userAddressToDavUrl(String userAddress, String userDomain) {
+	public String getUserAddress() {
+	    return userAddress;
+	}
+	
+	public void login() throws IOException {
+	    this.davUrl = this.userAddressToDavUrl(this.userAddress, this.userDomain);
+	}
+	
+	private String userAddressToDavUrl(String userAddress, String userDomain) throws IOException {
 		try {
 			URL hostMeta = new URL("http://"+ userDomain + "/.well-known/host-meta");
 			XMLReader xr = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
@@ -67,9 +76,6 @@ public class Unhosted {
 			xr.parse(new InputSource(lrdd.openStream()));
 			String davUrl = myLrddParser.getDavUrl();
 			return davUrl;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -101,7 +107,7 @@ public class Unhosted {
 		return sb.toString();
 	}
 	 
-	public String get(String userAddress, String dataScope, String blobKey) {
+	public String get(String userAddress, String dataScope, String blobKey) throws IOException {
 		String[] userAddressParts = userAddress.split("@");
 		if(userAddressParts.length != 2) {
 			return "error";
@@ -160,7 +166,11 @@ public class Unhosted {
 		//}
 		//return (String) this.davTokens.get(dataScope);
 	}
-	public void set(String dataScope, String blobKey, String blob) {
+	public void set(String dataScope, String blobKey, String blob) throws IOException {
+	    if (TextUtils.isEmpty(this.davUrl)) {
+	        login();
+	    }
+	    
 		try {
 		    // Create a new HttpClient and Post Header
 		    HttpClient httpclient = new DefaultHttpClient();

@@ -27,6 +27,20 @@ public class Sandwich {
 		}		
 	}
 	public String toJson() {
-		return "{ingredients:[\""+this.ingredients[0]+"\", \""+this.ingredients[1]+"\"]}";
+		return "{\"ingredients\":[\""+this.ingredients[0]+"\", \""+this.ingredients[1]+"\"]}";
+	    
+	    /*
+	    JSONObject json = new JSONObject();
+	    JSONArray jsonIngredients = new JSONArray();
+	    try {
+            jsonIngredients.put(new JSONObject(this.ingredients[0]));
+            jsonIngredients.put(new JSONObject(this.ingredients[1]));
+	        json.put("ingredients", jsonIngredients);;
+	    } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+	    return json.toString();
+	    */
 	}
 }
